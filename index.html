@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChessGame – Java Swing Chess</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-alt: #020617;
+      --card: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --border: rgba(148, 163, 184, 0.3);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, var(--bg) 50%, var(--bg-alt) 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 16px 40px;
+      flex: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 30% 20%, #e5e7eb 0, #9ca3af 30%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.8);
+    }
+    .logo-text-title {
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 0.02em;
+    }
+    .logo-text-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.18);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 840px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-main {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+      border-radius: 24px;
+      padding: 22px 22px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow:
+        0 24px 50px rgba(15, 23, 42, 0.9),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 3vw, 30px);
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 90%;
+      margin-bottom: 18px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease,
+        border-color 0.12s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      color: #0b1120;
+      box-shadow: 0 16px 35px rgba(56, 189, 248, 0.28);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 45px rgba(56, 189, 248, 0.4);
+      text-decoration: none;
+    }
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.4);
+      border-color: rgba(148, 163, 184, 0.5);
+      color: var(--text-main);
+    }
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.8);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 600px) {
+      .hero-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .feature-pill {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.1), rgba(15, 23, 42, 0.95));
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    .feature-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .hero-board-card {
+      background: radial-gradient(circle at top, rgba(148, 163, 184, 0.08), rgba(15, 23, 42, 0.98));
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.85);
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mini-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .mini-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .mini-board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      background: #020617;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.8);
+    }
+    .mini-square {
+      width: 100%;
+      padding-top: 100%;
+      position: relative;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mini-square-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mini-square.light {
+      background: #f3e7d3;
+    }
+    .mini-square.dark {
+      background: #b58863;
+    }
+    .mini-square.highlight {
+      background: #7bdcb5;
+    }
+    .mini-square.capture {
+      background: #ffd7a3;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    @media (max-width: 960px) {
+      .section-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 720px) {
+      .section-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 14px 14px 12px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-body {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .tag {
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+    }
+
+    footer {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 8px 12px 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">
+        <div class="logo-mark">♔</div>
+        <div>
+          <div class="logo-text-title">ChessGame</div>
+          <div class="logo-text-sub">Java Swing chess engine &amp; UI</div>
+        </div>
+      </div>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        <span>Open source • Java</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-main">
+        <h1 class="hero-title">Playable chess with bot, move hints, and promotion choices.</h1>
+        <p class="hero-subtitle">
+          A full chess engine plus a modern Swing interface. Play against a simple bot or a friend,
+          see legal moves highlighted, track captured pieces and move history, and choose your
+          promotion piece when a pawn reaches the last rank.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/dwavy079/ChessGame" target="_blank" rel="noreferrer">
+            View on GitHub
+          </a>
+          <a class="btn btn-ghost" href="#getting-started">
+            Getting started
+          </a>
+        </div>
+
+        <div class="hero-meta">
+          <span>• Java 17+ • Desktop (Swing)</span>
+          <span>• Vs Bot or Two Player</span>
+          <span>• Highlighted legal moves</span>
+        </div>
+
+        <div class="hero-grid">
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Vs bot (black)
+          </div>
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Move highlighting
+          </div>
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Captured pieces panel
+          </div>
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Pawn promotion choices
+          </div>
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Move history log
+          </div>
+          <div class="feature-pill">
+            <span class="feature-dot"></span>
+            Hint button
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-board-card">
+        <div class="mini-header">
+          <span class="mini-title">Board preview</span>
+          <span>White to move • vs bot</span>
+        </div>
+        <div class="mini-board">
+          <!-- Very small illustrative board layout with some highlights -->
+          <!-- Row 8 -->
+          <div class="mini-square dark"><div class="mini-square-inner">♜</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♞</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♝</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♛</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♚</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♝</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♞</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♜</div></div>
+          <!-- Row 7 -->
+          <div class="mini-square light"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♟</div></div>
+          <!-- Row 6 -->
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light highlight"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <!-- Row 5 -->
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark capture"><div class="mini-square-inner">♟</div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <!-- Row 4 -->
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark highlight"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <!-- Row 3 -->
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner"></div></div>
+          <!-- Row 2 -->
+          <div class="mini-square dark"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square light"><div class="mini-square-inner"></div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♙</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♙</div></div>
+          <!-- Row 1 -->
+          <div class="mini-square light"><div class="mini-square-inner">♖</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♘</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♗</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♕</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♔</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♗</div></div>
+          <div class="mini-square light"><div class="mini-square-inner">♘</div></div>
+          <div class="mini-square dark"><div class="mini-square-inner">♖</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="getting-started" class="section-grid">
+      <div class="card">
+        <div class="card-title">Getting started</div>
+        <div class="card-body">
+          <p>1. Install a recent JDK (Java 17+ recommended).</p>
+          <p>2. Clone the repository:</p>
+          <pre><code>git clone https://github.com/dwavy079/ChessGame.git
+cd ChessGame</code></pre>
+          <p>3. Compile and run:</p>
+          <pre><code>javac *.java
+java ChessFrontend</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Game features</div>
+        <div class="card-body">
+          <ul>
+            <li>Full chess rules: legal moves, check, checkmate, stalemate.</li>
+            <li>Play as White vs a simple random-move bot, or two-player mode.</li>
+            <li>Highlighted legal moves and capture squares for the selected piece.</li>
+            <li>Captured pieces panel and scrolling move history.</li>
+            <li>Pawn promotion dialog (Queen, Rook, Bishop, Knight) for human moves.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Under the hood</div>
+        <div class="card-body">
+          <p>
+            The engine is built around a <code>Board</code> class that tracks an 8×8 array of
+            <code>ChessPiece</code> objects. Each piece type implements its own
+            <code>isValidMove</code> logic, while shared path-checking lives in the base class.
+            The UI layer (<code>ChessFrontend</code>) is a pure Swing application with no external
+            dependencies.
+          </p>
+          <div class="card-tags">
+            <span class="tag">Java</span>
+            <span class="tag">Swing</span>
+            <span class="tag">Desktop</span>
+            <span class="tag">Chess engine</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Built with Java &amp; Swing. View the source on
+    <a href="https://github.com/dwavy079/ChessGame" target="_blank" rel="noreferrer">GitHub</a>.
+  </footer>
+</body>
+</html>
+
