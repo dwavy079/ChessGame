@@ -82,8 +82,9 @@ public class Board {
         return true;
     }
     
-    public void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
+    public ChessPiece makeMove(int fromRow, int fromCol, int toRow, int toCol) {
         ChessPiece piece = getPiece(fromRow, fromCol);
+        ChessPiece captured = getPiece(toRow, toCol);
         setPiece(toRow, toCol, piece);
         setPiece(fromRow, fromCol, null);
         
@@ -93,6 +94,8 @@ public class Board {
                 setPiece(toRow, toCol, new Queen(piece.isWhite()));
             }
         }
+        
+        return captured;
     }
     
     public boolean isInCheck(boolean isWhite) {
