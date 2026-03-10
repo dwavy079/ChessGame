@@ -1,15 +1,12 @@
-/* Full JavaFX Chess GUI */
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
+import javafx.geometry.Pos;
 public class ChessApp extends Application {
 
     private static final int TILE_SIZE = 80;
