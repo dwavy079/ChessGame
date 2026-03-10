@@ -5,12 +5,7 @@ import java.util.Random;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-/**
- * Swing "frontend" for the existing chess engine (Board + ChessPiece + subclasses).
- * - Click a piece to select
- * - Click a highlighted square to move
- * - Optional mode: play vs a simple random-move bot (Black)
- */
+
 public class ChessFrontend extends JFrame {
     private enum Mode { TWO_PLAYER, VS_BOT }
 
@@ -123,7 +118,7 @@ public class ChessFrontend extends JFrame {
         }
         center.add(boardPanel, BorderLayout.CENTER);
 
-        // Side panel
+        
         JPanel side = new JPanel();
         side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
         side.setPreferredSize(new Dimension(300, 640));
@@ -181,7 +176,7 @@ public class ChessFrontend extends JFrame {
 
     private void onSquareClicked(int row, int col) {
         if (gameOver) return;
-        if (mode == Mode.VS_BOT && !whiteToMove) return; // bot controls black
+        if (mode == Mode.VS_BOT && !whiteToMove) return; 
 
         ChessPiece clicked = board.getPiece(row, col);
         boolean clickedIsCurrentSide =
@@ -311,7 +306,6 @@ public class ChessFrontend extends JFrame {
         moveHistory.add(formatMove(moving, fromRow, fromCol, toRow, toCol, captured));
         whiteToMove = !whiteToMove;
 
-        // Game end checks apply to the SIDE TO MOVE
         if (board.isCheckmate(whiteToMove)) {
             gameOver = true;
             statusLabel.setText((whiteToMove ? "Black" : "White") + " wins by checkmate!");
