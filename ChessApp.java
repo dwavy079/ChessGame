@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import javafx.scene.input.MouseEvent;
 public class ChessApp extends Application {
 
     private static final int TILE_SIZE = 80;
