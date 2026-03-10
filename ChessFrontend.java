@@ -189,28 +189,27 @@ public class ChessFrontend extends JFrame {
             return;
         }
 
-        // Deselect
         if (row == selectedRow && col == selectedCol) {
             clearSelection();
             refreshBoard();
             return;
         }
 
-        // Change selection to another own piece
+    
         if (clickedIsCurrentSide) {
             selectSquare(row, col);
             refreshBoard();
             return;
         }
 
-        // Attempt move
+       
         if (legalMoves[row][col] && board.isValidMove(selectedRow, selectedCol, row, col)) {
             doMove(selectedRow, selectedCol, row, col, true);
             clearSelection();
             refreshAll();
 
             if (!gameOver && mode == Mode.VS_BOT && !whiteToMove) {
-                // Let UI repaint before bot moves
+        
                 new javax.swing.Timer(250, e -> {
                     ((javax.swing.Timer) e.getSource()).stop();
                     doBotMove();
@@ -265,8 +264,7 @@ public class ChessFrontend extends JFrame {
             if (moving != null && moving.isWhite()) capturedByWhite.add(captured);
             else capturedByBlack.add(captured);
         }
-
-        // Handle pawn promotion choice (human moves only; bot auto-queens)
+        
         boolean wasPromotion = moving instanceof Pawn &&
                 ((moving.isWhite() && toRow == 0) || (!moving.isWhite() && toRow == 7));
         if (wasPromotion && isHumanMove) {
@@ -282,7 +280,7 @@ public class ChessFrontend extends JFrame {
                     options[0]
             );
             if (choice < 0) {
-                choice = 0; // default to Queen if closed
+                choice = 0;
             }
             ChessPiece promoted;
             switch (choice) {
@@ -360,7 +358,6 @@ public class ChessFrontend extends JFrame {
         }
 
         if (moves.isEmpty()) {
-            // Defensive: checkmate/stalemate should already be detected
             if (board.isCheckmate(false)) statusLabel.setText("White wins by checkmate!");
             else statusLabel.setText("Game over.");
             gameOver = true;
@@ -401,8 +398,7 @@ public class ChessFrontend extends JFrame {
         int[] hint = all.get(random.nextInt(all.size()));
         selectSquare(hint[0], hint[1]);
         refreshBoard();
-
-        // Flash destination
+        
         JButton dest = squares[hint[2]][hint[3]];
         Color original = dest.getBackground();
         dest.setBackground(Color.YELLOW);
